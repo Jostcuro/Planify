@@ -4,7 +4,19 @@ const NOT_FOUND_MESSAGE = 'Recurso no encontrado'
 const INTERNAL_ERROR_MESSAGE = 'Error interno del servidor'
 
 interface HttpError extends Error {
-  status?: number
+  status?: number | string
+  statusCode?: number | string
+}
+
+function getHttpStatus(error: HttpError): number {
+  const raw = typeof error.status === 'number' ? error.status : error.statusCode ?? error.status
+  const status = typeof raw === 'number' ? raw : Number.parseInt(String(raw), 10)
+
+  if (Number.isInteger(status) && status >= 400 && status <= 599) {
+    return status
+  }
+
+  return 500
 }
 
 export function notFound(req: Request, res: Response): void {
@@ -20,7 +32,7 @@ export function errorHandler(
   res: Response,
   _next: NextFunction,
 ): void {
-  const status = error.status ?? 500
+  const status = getHttpStatus(error)
 
   if (status >= 500) {
     console.error('[errorHandler]', error)

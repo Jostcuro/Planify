@@ -1,8 +1,10 @@
+import { clerkMiddleware } from '@clerk/express'
 import cors from 'cors'
 import express, { type Express } from 'express'
 import morgan from 'morgan'
 
 import { errorHandler, notFound } from '@/middlewares/errorHandler.js'
+import authRoutes from '@/routes/auth.routes.js'
 
 const DEFAULT_CLIENT_URL = 'http://localhost:5173'
 
@@ -22,6 +24,7 @@ export function createApp(): Express {
     }),
   )
   app.use(express.json())
+  app.use('/api', clerkMiddleware())
 
   app.get('/health', (_req, res) => {
     res.json({
@@ -29,6 +32,8 @@ export function createApp(): Express {
       data: { status: 'ok', uptime: process.uptime() },
     })
   })
+
+  app.use('/api', authRoutes)
 
   app.use(notFound)
   app.use(errorHandler)
