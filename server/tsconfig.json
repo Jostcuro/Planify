@@ -17,7 +17,6 @@
     "resolveJsonModule": true,
     "sourceMap": true,
     "noEmitOnError": true,
-    "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
     }
