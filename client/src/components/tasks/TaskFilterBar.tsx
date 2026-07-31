@@ -2,15 +2,53 @@ import { Search } from 'lucide-react'
 
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Select } from '@/components/ui/select'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { ALL_PRIORITIES, ALL_STATUSES, PRIORITY_LABELS, STATUS_LABELS } from '@/lib/format'
-import type { Category } from '@/types'
+import type { Category, TaskPriority, TaskStatus } from '@/types'
+
+export const FILTER_ALL = 'all'
 
 export interface TaskFilterBarValue {
   search: string
   status: string
   priority: string
   categoryId: string
+}
+
+interface FilterSelectProps {
+  id: string
+  label: string
+  value: string
+  placeholder: string
+  items: { value: string; label: string }[]
+  onValueChange: (value: string) => void
+}
+
+function FilterSelect({ id, label, value, placeholder, items, onValueChange }: FilterSelectProps) {
+  return (
+    <div className="space-y-1">
+      <Label htmlFor={id}>{label}</Label>
+      <Select value={value} onValueChange={onValueChange}>
+        <SelectTrigger id={id} className="min-w-40">
+          <SelectValue placeholder={placeholder} />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value={FILTER_ALL}>{placeholder}</SelectItem>
+          {items.map((item) => (
+            <SelectItem key={item.value} value={item.value}>
+              {item.label}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </div>
+  )
 }
 
 interface TaskFilterBarProps {
@@ -37,51 +75,33 @@ export default function TaskFilterBar({ categories, value, onChange }: TaskFilte
           />
         </div>
       </div>
-      <div className="space-y-1">
-        <Label htmlFor="filter-status">Estado</Label>
-        <Select
-          id="filter-status"
-          value={value.status}
-          onChange={(event) => update({ status: event.target.value })}
-        >
-          <option value="">Todos</option>
-          {ALL_STATUSES.map((status) => (
-            <option key={status} value={status}>
-              {STATUS_LABELS[status]}
-            </option>
-          ))}
-        </Select>
-      </div>
-      <div className="space-y-1">
-        <Label htmlFor="filter-priority">Prioridad</Label>
-        <Select
-          id="filter-priority"
-          value={value.priority}
-          onChange={(event) => update({ priority: event.target.value })}
-        >
-          <option value="">Todas</option>
-          {ALL_PRIORITIES.map((priority) => (
-            <option key={priority} value={priority}>
-              {PRIORITY_LABELS[priority]}
-            </option>
-          ))}
-        </Select>
-      </div>
-      <div className="space-y-1">
-        <Label htmlFor="filter-category">Categoría</Label>
-        <Select
-          id="filter-category"
-          value={value.categoryId}
-          onChange={(event) => update({ categoryId: event.target.value })}
-        >
-          <option value="">Todas</option>
-          {categories.map((category) => (
-            <option key={category.id} value={category.id}>
-              {category.name}
-            </option>
-          ))}
-        </Select>
-      </div>
+      <FilterSelect
+        id="filter-status"
+        label="Estado"
+        value={value.status}
+        placeholder="Todos"
+        items={ALL_STATUSES.map((status) => ({ value: status, label: STATUS_LABELS[status as TaskStatus] }))}
+        onValueChange={(status) => update({ status })}
+      />
+      <FilterSelect
+        id="filter-priority"
+        label="Prioridad"
+        value={value.priority}
+        placeholder="Todas"
+        items={ALL_PRIORITIES.map((priority) => ({
+          value: priority,
+          label: PRIORITY_LABELS[priority as TaskPriority],
+        }))}
+        onValueChange={(priority) => update({ priority })}
+      />
+      <FilterSelect
+        id="filter-category"
+        label="Categoría"
+        value={value.categoryId}
+        placeholder="Todas"
+        items={categories.map((category) => ({ value: category.id, label: category.name }))}
+        onValueChange={(categoryId) => update({ categoryId })}
+      />
     </div>
   )
 }

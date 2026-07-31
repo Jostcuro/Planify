@@ -5,7 +5,13 @@ import SubtaskSection from '@/components/tasks/SubtaskSection'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
-import { Select } from '@/components/ui/select'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { useDeleteTask, useUpdateTask } from '@/hooks/useTasks'
 import { cn } from '@/lib/utils'
 import {
@@ -99,18 +105,21 @@ export default function TaskCard({ task, categories, onEdit }: TaskCardProps) {
 
         <div className="mt-3 flex items-center justify-between gap-2 border-t pt-3">
           <Select
-            className="h-8 w-auto text-xs"
             value={task.status}
-            onChange={(event) =>
-              updateTaskMutation.mutate({ id: task.id, payload: { status: event.target.value as Task['status'] } })
+            onValueChange={(status) =>
+              updateTaskMutation.mutate({ id: task.id, payload: { status: status as Task['status'] } })
             }
-            aria-label="Cambiar estado"
           >
-            {ALL_STATUSES.map((status) => (
-              <option key={status} value={status}>
-                {STATUS_LABELS[status]}
-              </option>
-            ))}
+            <SelectTrigger className="h-8 w-auto gap-1 text-xs" aria-label="Cambiar estado">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {ALL_STATUSES.map((status) => (
+                <SelectItem key={status} value={status}>
+                  {STATUS_LABELS[status]}
+                </SelectItem>
+              ))}
+            </SelectContent>
           </Select>
           <Button variant="ghost" size="sm" onClick={() => setExpanded((current) => !current)}>
             {expanded ? <ChevronUp /> : <ChevronDown />}

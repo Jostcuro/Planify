@@ -64,6 +64,10 @@ export function dateInputToIso(value: string): string | null {
   return new Date(year, month - 1, day, 12, 0, 0).toISOString()
 }
 
+export function dateObjectToIso(date: Date): string {
+  return new Date(date.getFullYear(), date.getMonth(), date.getDate(), 12, 0, 0).toISOString()
+}
+
 export function toDateKey(value: string | Date): string {
   const date = value instanceof Date ? value : new Date(value)
   const year = date.getFullYear()

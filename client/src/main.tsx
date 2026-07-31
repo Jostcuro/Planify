@@ -6,6 +6,8 @@ import { BrowserRouter, useNavigate } from 'react-router-dom'
 
 import App from '@/App'
 
+import { Toaster } from '@/components/ui/sonner'
+
 import '@/index.css'
 
 const publishableKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY
@@ -38,6 +40,7 @@ const ClerkWithRouter = () => {
     >
       <QueryClientProvider client={queryClient}>
         <App />
+        <Toaster />
       </QueryClientProvider>
     </ClerkProvider>
   )

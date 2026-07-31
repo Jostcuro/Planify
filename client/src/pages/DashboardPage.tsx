@@ -3,7 +3,7 @@ import { useMemo, useState } from 'react'
 
 import CategoryManager from '@/components/categories/CategoryManager'
 import TaskCard from '@/components/tasks/TaskCard'
-import TaskFilterBar, { type TaskFilterBarValue } from '@/components/tasks/TaskFilterBar'
+import TaskFilterBar, { FILTER_ALL, type TaskFilterBarValue } from '@/components/tasks/TaskFilterBar'
 import TaskFormModal from '@/components/tasks/TaskFormModal'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
@@ -15,9 +15,9 @@ import type { Task, TaskFilters, TaskPriority, TaskStatus } from '@/types'
 
 const INITIAL_FILTERS: TaskFilterBarValue = {
   search: '',
-  status: '',
-  priority: '',
-  categoryId: '',
+  status: FILTER_ALL,
+  priority: FILTER_ALL,
+  categoryId: FILTER_ALL,
 }
 
 export default function DashboardPage() {
@@ -32,9 +32,9 @@ export default function DashboardPage() {
       sortBy: 'dueDate',
       order: 'asc',
     }
-    if (filters.status) value.status = [filters.status as TaskStatus]
-    if (filters.priority) value.priority = [filters.priority as TaskPriority]
-    if (filters.categoryId) value.categoryId = filters.categoryId
+    if (filters.status !== FILTER_ALL) value.status = [filters.status as TaskStatus]
+    if (filters.priority !== FILTER_ALL) value.priority = [filters.priority as TaskPriority]
+    if (filters.categoryId !== FILTER_ALL) value.categoryId = filters.categoryId
     if (filters.search.trim()) value.search = filters.search.trim()
     return value
   }, [filters])
@@ -60,7 +60,12 @@ export default function DashboardPage() {
     setFormOpen(true)
   }
 
-  const hasActiveFilters = Boolean(filters.search || filters.status || filters.priority || filters.categoryId)
+  const hasActiveFilters = Boolean(
+    filters.search ||
+      filters.status !== FILTER_ALL ||
+      filters.priority !== FILTER_ALL ||
+      filters.categoryId !== FILTER_ALL,
+  )
 
   return (
     <div className="space-y-6">
