@@ -1,0 +1,37 @@
+import cors from 'cors'
+import express, { type Express } from 'express'
+import morgan from 'morgan'
+
+import { errorHandler, notFound } from '@/middlewares/errorHandler.js'
+
+const DEFAULT_CLIENT_URL = 'http://localhost:5173'
+
+export function createApp(): Express {
+  const app = express()
+
+  app.disable('x-powered-by')
+
+  if (process.env.NODE_ENV !== 'production') {
+    app.use(morgan('dev'))
+  }
+
+  app.use(
+    cors({
+      origin: process.env.CLIENT_URL ?? DEFAULT_CLIENT_URL,
+      credentials: true,
+    }),
+  )
+  app.use(express.json())
+
+  app.get('/health', (_req, res) => {
+    res.json({
+      success: true,
+      data: { status: 'ok', uptime: process.uptime() },
+    })
+  })
+
+  app.use(notFound)
+  app.use(errorHandler)
+
+  return app
+}
