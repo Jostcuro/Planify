@@ -6,6 +6,8 @@ import morgan from 'morgan'
 import { errorHandler, notFound } from '@/middlewares/errorHandler.js'
 import authRoutes from '@/routes/auth.routes.js'
 import categoryRoutes from '@/routes/category.routes.js'
+import metricsRoutes from '@/routes/metrics.routes.js'
+import subtaskRoutes from '@/routes/subtask.routes.js'
 import taskRoutes from '@/routes/task.routes.js'
 
 const DEFAULT_CLIENT_URL = 'http://localhost:5173'
@@ -38,6 +40,8 @@ export function createApp(): Express {
   app.use('/api', authRoutes)
   app.use('/api/categories', categoryRoutes)
   app.use('/api/tasks', taskRoutes)
+  app.use('/api/tasks/:taskId/subtasks', subtaskRoutes)
+  app.use('/api/metrics', metricsRoutes)
 
   app.use(notFound)
   app.use(errorHandler)
