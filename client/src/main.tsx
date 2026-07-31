@@ -2,6 +2,7 @@ import { ClerkProvider } from '@clerk/clerk-react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import React from 'react'
 import ReactDOM from 'react-dom/client'
+import { BrowserRouter, useNavigate } from 'react-router-dom'
 
 import App from '@/App'
 
@@ -22,18 +23,30 @@ const queryClient = new QueryClient({
   },
 })
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
+const ClerkWithRouter = () => {
+  const navigate = useNavigate()
+
+  return (
     <ClerkProvider
       publishableKey={publishableKey}
       signInUrl="/login"
       signUpUrl="/sign-up"
-      afterSignInUrl="/dashboard"
-      afterSignUpUrl="/dashboard"
+      signInFallbackRedirectUrl="/dashboard"
+      signUpFallbackRedirectUrl="/dashboard"
+      routerPush={(to) => navigate(to)}
+      routerReplace={(to) => navigate(to, { replace: true })}
     >
       <QueryClientProvider client={queryClient}>
         <App />
       </QueryClientProvider>
     </ClerkProvider>
+  )
+}
+
+ReactDOM.createRoot(document.getElementById('root')!).render(
+  <React.StrictMode>
+    <BrowserRouter>
+      <ClerkWithRouter />
+    </BrowserRouter>
   </React.StrictMode>,
 )

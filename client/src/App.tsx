@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import { Route, Routes } from 'react-router-dom'
 
 import ProtectedRoute from '@/components/ProtectedRoute'
 import DashboardLayout from '@/components/layout/DashboardLayout'
@@ -12,20 +12,18 @@ import SignUpPage from '@/pages/SignUpPage'
 
 export default function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/login" element={<SignInPage />} />
-        <Route path="/sign-up" element={<SignUpPage />} />
-        <Route element={<ProtectedRoute />}>
-          <Route path="/dashboard" element={<DashboardLayout />}>
-            <Route index element={<DashboardPage />} />
-            <Route path="calendar" element={<CalendarPage />} />
-            <Route path="metrics" element={<MetricsPage />} />
-          </Route>
+    <Routes>
+      <Route path="/" element={<LandingPage />} />
+      <Route path="/login/*" element={<SignInPage />} />
+      <Route path="/sign-up/*" element={<SignUpPage />} />
+      <Route element={<ProtectedRoute />}>
+        <Route path="/dashboard" element={<DashboardLayout />}>
+          <Route index element={<DashboardPage />} />
+          <Route path="calendar" element={<CalendarPage />} />
+          <Route path="metrics" element={<MetricsPage />} />
         </Route>
-        <Route path="*" element={<NotFoundPage />} />
-      </Routes>
-    </BrowserRouter>
+      </Route>
+      <Route path="*" element={<NotFoundPage />} />
+    </Routes>
   )
 }
