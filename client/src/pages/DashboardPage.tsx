@@ -1,7 +1,8 @@
-import { AlertTriangle, ClipboardList, FolderPlus, Plus } from 'lucide-react'
+import { AlertTriangle, ClipboardList, FolderPlus, List, Plus, SquareKanban } from 'lucide-react'
 import { useMemo, useState } from 'react'
 
 import CategoryManager from '@/components/categories/CategoryManager'
+import KanbanView from '@/components/tasks/KanbanView'
 import TaskCard from '@/components/tasks/TaskCard'
 import TaskFilterBar, { FILTER_ALL, type TaskFilterBarValue } from '@/components/tasks/TaskFilterBar'
 import TaskFormModal from '@/components/tasks/TaskFormModal'
@@ -11,7 +12,10 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { useCategories } from '@/hooks/useCategories'
 import { useTasks } from '@/hooks/useTasks'
 import { isOverdue } from '@/lib/format'
+import { cn } from '@/lib/utils'
 import type { Task, TaskFilters, TaskPriority, TaskStatus } from '@/types'
+
+type TaskView = 'list' | 'kanban'
 
 const INITIAL_FILTERS: TaskFilterBarValue = {
   search: '',
@@ -22,6 +26,7 @@ const INITIAL_FILTERS: TaskFilterBarValue = {
 
 export default function DashboardPage() {
   const [filters, setFilters] = useState<TaskFilterBarValue>(INITIAL_FILTERS)
+  const [view, setView] = useState<TaskView>('list')
   const [formOpen, setFormOpen] = useState(false)
   const [editingTask, setEditingTask] = useState<Task | null>(null)
   const [categoriesOpen, setCategoriesOpen] = useState(false)
@@ -40,6 +45,12 @@ export default function DashboardPage() {
   }, [filters])
 
   const { data: tasks, isLoading, isError, refetch } = useTasks(queryFilters)
+
+  const kanbanFilters = useMemo<TaskFilters>(() => {
+    const value: TaskFilters = { ...queryFilters }
+    delete value.status
+    return value
+  }, [queryFilters])
 
   const summary = useMemo(() => {
     const list = tasks ?? []
@@ -77,6 +88,34 @@ export default function DashboardPage() {
           </p>
         </div>
         <div className="flex items-center gap-2">
+          <div className="flex items-center rounded-md border bg-muted p-0.5" role="tablist" aria-label="Vista de tareas">
+            <button
+              type="button"
+              role="tab"
+              aria-selected={view === 'list'}
+              onClick={() => setView('list')}
+              className={cn(
+                'inline-flex items-center gap-1.5 rounded px-3 py-1.5 text-sm font-medium transition-colors',
+                view === 'list' ? 'bg-background text-foreground shadow-sm' : 'text-muted-foreground',
+              )}
+            >
+              <List className="size-4" />
+              <span className="hidden sm:inline">Lista</span>
+            </button>
+            <button
+              type="button"
+              role="tab"
+              aria-selected={view === 'kanban'}
+              onClick={() => setView('kanban')}
+              className={cn(
+                'inline-flex items-center gap-1.5 rounded px-3 py-1.5 text-sm font-medium transition-colors',
+                view === 'kanban' ? 'bg-background text-foreground shadow-sm' : 'text-muted-foreground',
+              )}
+            >
+              <SquareKanban className="size-4" />
+              <span className="hidden sm:inline">Kanban</span>
+            </button>
+          </div>
           <Button variant="outline" onClick={() => setCategoriesOpen(true)}>
             <FolderPlus />
             Categorías
@@ -113,46 +152,52 @@ export default function DashboardPage() {
         ) : null}
       </div>
 
-      {isLoading ? (
-        <div className="grid gap-3">
-          <Skeleton className="h-32 w-full" />
-          <Skeleton className="h-32 w-full" />
-          <Skeleton className="h-32 w-2/3" />
-        </div>
-      ) : null}
-
-      {isError ? (
-        <div className="flex flex-col items-center gap-3 rounded-lg border border-dashed p-10 text-center">
-          <AlertTriangle className="size-8 text-destructive" />
-          <p className="text-muted-foreground">No se pudieron cargar las tareas.</p>
-          <Button variant="outline" onClick={() => void refetch()}>
-            Reintentar
-          </Button>
-        </div>
-      ) : null}
-
-      {!isLoading && !isError && tasks && tasks.length === 0 ? (
-        <div className="flex flex-col items-center gap-3 rounded-lg border border-dashed p-10 text-center">
-          <ClipboardList className="size-8 text-muted-foreground" />
-          <p className="text-muted-foreground">
-            {hasActiveFilters ? 'No hay tareas que coincidan con los filtros.' : 'Todavía no tienes tareas.'}
-          </p>
-          {!hasActiveFilters ? (
-            <Button onClick={openCreate}>
-              <Plus />
-              Crear tu primera tarea
-            </Button>
+      {view === 'kanban' ? (
+        <KanbanView filters={kanbanFilters} categories={categories ?? []} onEdit={openEdit} />
+      ) : (
+        <>
+          {isLoading ? (
+            <div className="grid gap-3">
+              <Skeleton className="h-32 w-full" />
+              <Skeleton className="h-32 w-full" />
+              <Skeleton className="h-32 w-2/3" />
+            </div>
           ) : null}
-        </div>
-      ) : null}
 
-      {!isLoading && !isError && tasks && tasks.length > 0 ? (
-        <div className="grid gap-3">
-          {tasks.map((task) => (
-            <TaskCard key={task.id} task={task} categories={categories ?? []} onEdit={openEdit} />
-          ))}
-        </div>
-      ) : null}
+          {isError ? (
+            <div className="flex flex-col items-center gap-3 rounded-lg border border-dashed p-10 text-center">
+              <AlertTriangle className="size-8 text-destructive" />
+              <p className="text-muted-foreground">No se pudieron cargar las tareas.</p>
+              <Button variant="outline" onClick={() => void refetch()}>
+                Reintentar
+              </Button>
+            </div>
+          ) : null}
+
+          {!isLoading && !isError && tasks && tasks.length === 0 ? (
+            <div className="flex flex-col items-center gap-3 rounded-lg border border-dashed p-10 text-center">
+              <ClipboardList className="size-8 text-muted-foreground" />
+              <p className="text-muted-foreground">
+                {hasActiveFilters ? 'No hay tareas que coincidan con los filtros.' : 'Todavía no tienes tareas.'}
+              </p>
+              {!hasActiveFilters ? (
+                <Button onClick={openCreate}>
+                  <Plus />
+                  Crear tu primera tarea
+                </Button>
+              ) : null}
+            </div>
+          ) : null}
+
+          {!isLoading && !isError && tasks && tasks.length > 0 ? (
+            <div className="grid gap-3">
+              {tasks.map((task) => (
+                <TaskCard key={task.id} task={task} categories={categories ?? []} onEdit={openEdit} />
+              ))}
+            </div>
+          ) : null}
+        </>
+      )}
 
       <TaskFormModal
         open={formOpen}

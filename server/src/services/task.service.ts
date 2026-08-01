@@ -44,7 +44,11 @@ export async function getTasks(userId: string, filters: TaskFilters = {}) {
   const order = filters.order ?? 'asc'
   const orderBy = { [sortBy]: order } as Prisma.TaskOrderByWithRelationInput
 
-  return prisma.task.findMany({ where, orderBy })
+  return prisma.task.findMany({
+    where,
+    orderBy,
+    include: { subtasks: { select: { id: true, completed: true } } },
+  })
 }
 
 export async function getTaskById(userId: string, id: string) {
