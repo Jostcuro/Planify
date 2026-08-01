@@ -1,6 +1,6 @@
 import { Router } from 'express'
 
-import { injectUser, requireAuth } from '@/middlewares/auth.js'
+import { ensureUser, injectUser, requireAuth } from '@/middlewares/auth.js'
 import { validateBody } from '@/middlewares/validate.js'
 import {
   createCategory,
@@ -12,7 +12,7 @@ import { createCategorySchema, updateCategorySchema } from '@/types/category.sch
 
 const router = Router()
 
-router.use(requireAuth, injectUser)
+router.use(requireAuth, injectUser, ensureUser)
 
 router.get('/', listCategories)
 router.post('/', validateBody(createCategorySchema), createCategory)

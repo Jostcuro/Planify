@@ -1,6 +1,6 @@
 import { Router } from 'express'
 
-import { injectUser, requireAuth } from '@/middlewares/auth.js'
+import { ensureUser, injectUser, requireAuth } from '@/middlewares/auth.js'
 import { validateBody, validateQuery } from '@/middlewares/validate.js'
 import {
   createTask,
@@ -13,7 +13,7 @@ import { createTaskSchema, taskFiltersSchema, updateTaskSchema } from '@/types/t
 
 const router = Router()
 
-router.use(requireAuth, injectUser)
+router.use(requireAuth, injectUser, ensureUser)
 
 router.get('/', validateQuery(taskFiltersSchema), listTasks)
 router.get('/:id', getTaskById)
