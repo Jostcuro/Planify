@@ -118,7 +118,7 @@ export default function LandingPage() {
       </section>
 
       <footer className="border-t py-8 text-center text-sm text-muted-foreground">
-        <p>© {new Date().getFullYear()} Planify. Hecho con foco en la productividad.</p>
+        <p>© 2026 Johan Steven Cuero Rodríguez. Todos los derechos reservados.</p>
       </footer>
     </div>
   )
