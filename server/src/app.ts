@@ -3,6 +3,8 @@ import cors from 'cors'
 import express, { type Express } from 'express'
 import helmet from 'helmet'
 import morgan from 'morgan'
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
 import rateLimit from 'express-rate-limit'
 
 import { env } from '@/config/env.js'
@@ -46,9 +48,17 @@ export function createApp(): Express {
     app.use(morgan('dev'))
   }
 
+  const allowedOrigin = env.CLIENT_URL ?? DEFAULT_CLIENT_URL
+
   app.use(
     cors({
-      origin: env.CLIENT_URL ?? DEFAULT_CLIENT_URL,
+      origin: (origin, callback) => {
+        if (!origin || origin === allowedOrigin) {
+          callback(null, true)
+        } else {
+          callback(null, false)
+        }
+      },
       credentials: true,
     }),
   )
@@ -67,6 +77,20 @@ export function createApp(): Express {
   app.use('/api/tasks', taskRoutes)
   app.use('/api/tasks/:taskId/subtasks', subtaskRoutes)
   app.use('/api/metrics', metricsRoutes)
+
+  if (env.NODE_ENV === 'production') {
+    const clientDist = path.resolve(fileURLToPath(new URL('../../client/dist', import.meta.url)))
+
+    app.use(express.static(clientDist))
+
+    app.get('*', (req, res, next) => {
+      if (req.path.startsWith('/api') || req.path.startsWith('/health')) {
+        next()
+        return
+      }
+      res.sendFile(path.join(clientDist, 'index.html'))
+    })
+  }
 
   app.use(notFound)
   app.use(errorHandler)
