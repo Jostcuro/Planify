@@ -38,15 +38,19 @@ interface TaskFormModalProps {
   onClose: () => void
   categories: Category[]
   task?: Task | null
+  initialDueDate?: Date | null
 }
 
-function toDefaults(task: Task | null | undefined): TaskFormValues {
+export function toDefaults(
+  task: Task | null | undefined,
+  initialDueDate?: Date | null,
+): TaskFormValues {
   return {
     title: task?.title ?? '',
     description: task?.description ?? '',
     priority: task?.priority ?? 'MEDIUM',
     status: task?.status ?? 'TODO',
-    dueDate: task?.dueDate ? new Date(task.dueDate) : null,
+    dueDate: task ? (task.dueDate ? new Date(task.dueDate) : null) : (initialDueDate ?? null),
     categoryId: task?.categoryId ?? null,
     subtasks: [],
   }
@@ -57,7 +61,7 @@ function errorMessage(error: unknown): string {
   return data?.error ?? 'Ocurrió un error inesperado'
 }
 
-export default function TaskFormModal({ open, onClose, categories, task }: TaskFormModalProps) {
+export default function TaskFormModal({ open, onClose, categories, task, initialDueDate }: TaskFormModalProps) {
   const isEdit = Boolean(task)
   const createTaskMutation = useCreateTask()
   const updateTaskMutation = useUpdateTask()
@@ -70,7 +74,7 @@ export default function TaskFormModal({ open, onClose, categories, task }: TaskF
     formState: { errors },
   } = useForm<TaskFormValues>({
     resolver: zodResolver(taskFormSchema),
-    defaultValues: toDefaults(task),
+    defaultValues: toDefaults(task, initialDueDate),
   })
 
   const { fields, append, remove } = useFieldArray({
@@ -80,9 +84,9 @@ export default function TaskFormModal({ open, onClose, categories, task }: TaskF
 
   useEffect(() => {
     if (open) {
-      reset(toDefaults(task))
+      reset(toDefaults(task, initialDueDate))
     }
-  }, [open, task, reset])
+  }, [open, task, initialDueDate, reset])
 
   const isPending = createTaskMutation.isPending || updateTaskMutation.isPending
 
