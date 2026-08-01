@@ -1,0 +1,24 @@
+services:
+  - type: web
+    name: planify
+    runtime: node
+    plan: free
+    rootDir: server
+    autoDeploy: true
+    buildCommand: npm install --include=dev && npm install --prefix ../client --include=dev && npm run build --prefix ../client && npm run build
+    startCommand: npx prisma migrate deploy && node dist/server.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: VITE_API_URL
+        value: /api
+      - key: DATABASE_URL
+        sync: false
+      - key: CLERK_SECRET_KEY
+        sync: false
+      - key: CLERK_PUBLISHABLE_KEY
+        sync: false
+      - key: VITE_CLERK_PUBLISHABLE_KEY
+        sync: false
+      - key: CLIENT_URL
+        sync: false
