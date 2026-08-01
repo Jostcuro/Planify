@@ -2,6 +2,7 @@ import { useDroppable } from '@dnd-kit/core'
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 
 import KanbanCard from '@/components/tasks/KanbanCard'
+import EmptyState from '@/components/ui/empty-state'
 import { STATUS_LABELS } from '@/lib/format'
 import { cn } from '@/lib/utils'
 import type { Category, Task, TaskStatus } from '@/types'
@@ -44,9 +45,7 @@ export default function KanbanColumn({ status, tasks, categories, onEdit }: Kanb
 
       <div className="flex-1 overflow-y-auto px-2 pb-2">
         {tasks.length === 0 ? (
-          <div className="flex h-24 items-center justify-center rounded-md border border-dashed text-xs text-muted-foreground">
-            Sin tareas
-          </div>
+          <EmptyState title="Sin tareas" className="h-24 justify-center rounded-md border border-dashed" />
         ) : (
           <SortableContext items={tasks.map((task) => task.id)} strategy={verticalListSortingStrategy}>
             <div className="space-y-2">

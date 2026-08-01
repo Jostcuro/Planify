@@ -8,6 +8,8 @@ import TaskFilterBar, { FILTER_ALL, type TaskFilterBarValue } from '@/components
 import TaskFormModal from '@/components/tasks/TaskFormModal'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
+import EmptyState from '@/components/ui/empty-state'
+import ErrorState from '@/components/ui/error-state'
 import SkeletonTable from '@/components/ui/skeleton-table'
 import { useCategories } from '@/hooks/useCategories'
 import { useTasks } from '@/hooks/useTasks'
@@ -158,29 +160,29 @@ export default function DashboardPage() {
         <>
           {isLoading ? <SkeletonTable rows={4} /> : null}
 
-          {isError ? (
-            <div className="flex flex-col items-center gap-3 rounded-lg border border-dashed p-10 text-center">
-              <AlertTriangle className="size-8 text-destructive" />
-              <p className="text-muted-foreground">No se pudieron cargar las tareas.</p>
-              <Button variant="outline" onClick={() => void refetch()}>
-                Reintentar
-              </Button>
-            </div>
-          ) : null}
+          {isError ? <ErrorState onRetry={() => void refetch()} /> : null}
 
           {!isLoading && !isError && tasks && tasks.length === 0 ? (
-            <div className="flex flex-col items-center gap-3 rounded-lg border border-dashed p-10 text-center">
-              <ClipboardList className="size-8 text-muted-foreground" />
-              <p className="text-muted-foreground">
-                {hasActiveFilters ? 'No hay tareas que coincidan con los filtros.' : 'Todavía no tienes tareas.'}
-              </p>
-              {!hasActiveFilters ? (
-                <Button onClick={openCreate}>
-                  <Plus />
-                  Crear tu primera tarea
-                </Button>
-              ) : null}
-            </div>
+            <EmptyState
+              icon={ClipboardList}
+              title={
+                hasActiveFilters
+                  ? 'No hay tareas que coincidan con los filtros.'
+                  : 'Todavía no tienes tareas.'
+              }
+              description={
+                hasActiveFilters ? 'Prueba con otros criterios de búsqueda.' : 'Crea tu primera tarea para empezar.'
+              }
+              action={
+                !hasActiveFilters ? (
+                  <Button onClick={openCreate}>
+                    <Plus />
+                    Crear tu primera tarea
+                  </Button>
+                ) : undefined
+              }
+              className="rounded-lg border border-dashed p-10"
+            />
           ) : null}
 
           {!isLoading && !isError && tasks && tasks.length > 0 ? (

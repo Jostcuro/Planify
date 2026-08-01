@@ -1,13 +1,21 @@
-import { AlertTriangle, CalendarClock, CheckCircle2, Clock3, ListTodo, TrendingUp } from 'lucide-react'
+import {
+  AlertTriangle,
+  BarChart3,
+  CalendarClock,
+  CheckCircle2,
+  Clock3,
+  ListTodo,
+  TrendingUp,
+} from 'lucide-react'
 
 import CategoryChart from '@/components/metrics/CategoryChart'
 import KpiCard from '@/components/metrics/KpiCard'
 import StatusChart from '@/components/metrics/StatusChart'
 import WeeklyChart from '@/components/metrics/WeeklyChart'
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import EmptyState from '@/components/ui/empty-state'
+import ErrorState from '@/components/ui/error-state'
 import { Skeleton } from '@/components/ui/skeleton'
 import {
   formatDate,
@@ -45,23 +53,23 @@ export default function MetricsView({ metrics, isLoading, isError, onRetry }: Me
   }
 
   if (isError || !metrics) {
-    return (
-      <EmptyState
-        icon={AlertTriangle}
-        title="No se pudieron cargar las métricas."
-        action={
-          <Button variant="outline" onClick={onRetry}>
-            Reintentar
-          </Button>
-        }
-        className="rounded-lg border border-dashed p-10"
-      />
-    )
+    return <ErrorState onRetry={onRetry} />
   }
 
   const { overview } = metrics
   const completionPercent = Math.round(overview.completionRate * 100)
   const priorityCounts = new Map(metrics.byPriority.map((item) => [item.priority, item.count]))
+
+  if (overview.totalTasks === 0) {
+    return (
+      <EmptyState
+        icon={BarChart3}
+        title="Todavía no tienes tareas para ver métricas."
+        description="Crea tu primera tarea para empezar."
+        className="rounded-lg border border-dashed p-10"
+      />
+    )
+  }
 
   return (
     <div className="space-y-6">

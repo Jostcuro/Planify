@@ -1,12 +1,11 @@
 import { pointerWithin, DndContext, DragOverlay, type DragEndEvent, type DragStartEvent } from '@dnd-kit/core'
-import { AlertTriangle } from 'lucide-react'
 import { useMemo, useState } from 'react'
 
 import { kanbanAccessibility, useKanbanSensors } from '@/components/tasks/dnd-config'
 import { KanbanCardContent } from '@/components/tasks/KanbanCard'
 import KanbanColumn from '@/components/tasks/KanbanColumn'
+import ErrorState from '@/components/ui/error-state'
 import SkeletonKanban from '@/components/ui/skeleton-kanban'
-import { Button } from '@/components/ui/button'
 import { useTasks } from '@/hooks/useTasks'
 import { useUpdateTaskStatus } from '@/hooks/useUpdateTaskStatus'
 import { ALL_STATUSES } from '@/lib/format'
@@ -61,15 +60,7 @@ export default function KanbanView({ filters, categories, onEdit }: KanbanViewPr
     >
       {isLoading ? <SkeletonKanban /> : null}
 
-      {isError ? (
-        <div className="flex flex-col items-center gap-3 rounded-lg border border-dashed p-10 text-center">
-          <AlertTriangle className="size-8 text-destructive" />
-          <p className="text-muted-foreground">No se pudieron cargar las tareas.</p>
-          <Button variant="outline" onClick={() => void refetch()}>
-            Reintentar
-          </Button>
-        </div>
-      ) : null}
+      {isError ? <ErrorState onRetry={() => void refetch()} /> : null}
 
       {!isLoading && !isError ? (
         <div className="flex snap-x gap-4 overflow-x-auto pb-2 lg:grid lg:grid-cols-6 lg:overflow-visible">
