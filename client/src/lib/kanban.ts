@@ -1,5 +1,4 @@
-import { ALL_STATUSES } from '@/lib/format'
-import type { Task, TaskStatus } from '@/types'
+import { TASK_STATUSES, type Task, type TaskStatus } from '@/types'
 
 export type KanbanGroups = Record<TaskStatus, Task[]>
 
@@ -32,5 +31,5 @@ export function subtaskProgress(task: Pick<Task, 'subtasks'>): SubtaskProgress {
 }
 
 export function isValidStatus(value: unknown): value is TaskStatus {
-  return typeof value === 'string' && (ALL_STATUSES as string[]).includes(value)
+  return typeof value === 'string' && (TASK_STATUSES as readonly string[]).includes(value)
 }

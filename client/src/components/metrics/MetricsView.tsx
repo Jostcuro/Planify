@@ -25,7 +25,7 @@ import {
   PRIORITY_LABELS,
   STATUS_LABELS,
 } from '@/lib/format'
-import type { MetricsResponse, TaskPriority } from '@/types'
+import { TASK_PRIORITIES, type MetricsResponse } from '@/types'
 
 interface MetricsViewProps {
   metrics: MetricsResponse | undefined
@@ -33,8 +33,6 @@ interface MetricsViewProps {
   isError: boolean
   onRetry: () => void
 }
-
-const PRIORITIES = Object.keys(PRIORITY_LABELS) as TaskPriority[]
 
 export default function MetricsView({ metrics, isLoading, isError, onRetry }: MetricsViewProps) {
   if (isLoading) {
@@ -125,7 +123,7 @@ export default function MetricsView({ metrics, isLoading, isError, onRetry }: Me
             <CardTitle>Por prioridad</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
-            {PRIORITIES.map((priority) => (
+            {TASK_PRIORITIES.map((priority) => (
               <div key={priority} className="flex items-center gap-3">
                 <span
                   className="size-2.5 shrink-0 rounded-full"

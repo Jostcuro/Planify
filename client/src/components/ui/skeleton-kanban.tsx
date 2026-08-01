@@ -1,10 +1,10 @@
 import { Skeleton } from '@/components/ui/skeleton'
-import { ALL_STATUSES } from '@/lib/format'
+import { TASK_STATUSES } from '@/types'
 
 export default function SkeletonKanban() {
   return (
     <div className="flex gap-4 overflow-x-auto pb-2 lg:grid lg:grid-cols-6" aria-hidden="true">
-      {ALL_STATUSES.map((status) => (
+      {TASK_STATUSES.map((status) => (
         <div
           key={status}
           data-testid="skeleton-column"

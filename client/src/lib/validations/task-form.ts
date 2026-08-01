@@ -1,14 +1,6 @@
 import { z } from 'zod'
 
-export const TASK_PRIORITIES = ['LOW', 'MEDIUM', 'HIGH', 'URGENT'] as const
-export const TASK_STATUSES = [
-  'BACKLOG',
-  'TODO',
-  'IN_PROGRESS',
-  'IN_REVIEW',
-  'COMPLETED',
-  'CANCELLED',
-] as const
+import { TASK_PRIORITIES, TASK_STATUSES } from '@/types'
 
 export const taskFormSchema = z.object({
   title: z

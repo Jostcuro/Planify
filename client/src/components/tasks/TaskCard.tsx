@@ -17,7 +17,6 @@ import { useDeleteTask } from '@/hooks/useTasks'
 import { useUpdateTaskStatus } from '@/hooks/useUpdateTaskStatus'
 import { cn } from '@/lib/utils'
 import {
-  ALL_STATUSES,
   formatDate,
   getCategoryStyle,
   isOverdue,
@@ -27,7 +26,7 @@ import {
   STATUS_BADGE,
   STATUS_LABELS,
 } from '@/lib/format'
-import type { Category, Task } from '@/types'
+import { TASK_STATUSES, type Category, type Task } from '@/types'
 
 interface TaskCardProps {
   task: Task
@@ -117,7 +116,7 @@ export default function TaskCard({ task, categories, onEdit }: TaskCardProps) {
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              {ALL_STATUSES.map((status) => (
+              {TASK_STATUSES.map((status) => (
                 <SelectItem key={status} value={status}>
                   {STATUS_LABELS[status]}
                 </SelectItem>

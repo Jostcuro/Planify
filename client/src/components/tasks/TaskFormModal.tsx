@@ -27,8 +27,8 @@ import { Textarea } from '@/components/ui/textarea'
 import { useCreateTask, useUpdateTask } from '@/hooks/useTasks'
 import { cn } from '@/lib/utils'
 import { dateObjectToIso, formatDate, PRIORITY_LABELS, STATUS_LABELS } from '@/lib/format'
-import { taskFormSchema, TASK_PRIORITIES, TASK_STATUSES, type TaskFormValues } from '@/lib/validations/task-form'
-import type { Category, Task } from '@/types'
+import { taskFormSchema, type TaskFormValues } from '@/lib/validations/task-form'
+import { TASK_PRIORITIES, TASK_STATUSES, type Category, type Task } from '@/types'
 
 const CATEGORY_NONE = '__none__'
 

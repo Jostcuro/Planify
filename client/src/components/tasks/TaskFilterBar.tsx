@@ -9,15 +9,21 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { ALL_PRIORITIES, ALL_STATUSES, PRIORITY_LABELS, STATUS_LABELS } from '@/lib/format'
-import type { Category, TaskPriority, TaskStatus } from '@/types'
+import { PRIORITY_LABELS, STATUS_LABELS } from '@/lib/format'
+import { TASK_PRIORITIES, TASK_STATUSES, type Category, type TaskPriority, type TaskStatus } from '@/types'
 
 export const FILTER_ALL = 'all'
 
+export type FilterValue<T> = T | typeof FILTER_ALL
+
+function toFilterValue<T extends string>(list: readonly T[], value: string): FilterValue<T> {
+  return (list as readonly string[]).includes(value) ? (value as T) : FILTER_ALL
+}
+
 export interface TaskFilterBarValue {
   search: string
-  status: string
-  priority: string
+  status: FilterValue<TaskStatus>
+  priority: FilterValue<TaskPriority>
   categoryId: string
 }
 
@@ -80,19 +86,19 @@ export default function TaskFilterBar({ categories, value, onChange }: TaskFilte
         label="Estado"
         value={value.status}
         placeholder="Todos"
-        items={ALL_STATUSES.map((status) => ({ value: status, label: STATUS_LABELS[status as TaskStatus] }))}
-        onValueChange={(status) => update({ status })}
+        items={TASK_STATUSES.map((status) => ({ value: status, label: STATUS_LABELS[status] }))}
+        onValueChange={(value) => update({ status: toFilterValue(TASK_STATUSES, value) })}
       />
       <FilterSelect
         id="filter-priority"
         label="Prioridad"
         value={value.priority}
         placeholder="Todas"
-        items={ALL_PRIORITIES.map((priority) => ({
+        items={TASK_PRIORITIES.map((priority) => ({
           value: priority,
-          label: PRIORITY_LABELS[priority as TaskPriority],
+          label: PRIORITY_LABELS[priority],
         }))}
-        onValueChange={(priority) => update({ priority })}
+        onValueChange={(value) => update({ priority: toFilterValue(TASK_PRIORITIES, value) })}
       />
       <FilterSelect
         id="filter-category"

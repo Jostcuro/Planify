@@ -8,9 +8,8 @@ import ErrorState from '@/components/ui/error-state'
 import SkeletonKanban from '@/components/ui/skeleton-kanban'
 import { useTasks } from '@/hooks/useTasks'
 import { useUpdateTaskStatus } from '@/hooks/useUpdateTaskStatus'
-import { ALL_STATUSES } from '@/lib/format'
 import { groupTasksByStatus, isValidStatus } from '@/lib/kanban'
-import type { Category, Task, TaskFilters, TaskStatus } from '@/types'
+import { TASK_STATUSES, type Category, type Task, type TaskFilters, type TaskStatus } from '@/types'
 
 interface KanbanViewProps {
   filters?: TaskFilters
@@ -64,7 +63,7 @@ export default function KanbanView({ filters, categories, onEdit }: KanbanViewPr
 
       {!isLoading && !isError ? (
         <div className="flex snap-x gap-4 overflow-x-auto pb-2 lg:grid lg:grid-cols-6 lg:overflow-visible">
-          {ALL_STATUSES.map((status) => (
+          {TASK_STATUSES.map((status) => (
             <KanbanColumn
               key={status}
               status={status}

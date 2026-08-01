@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest'
 
 import SkeletonKanban from '@/components/ui/skeleton-kanban'
 import SkeletonTable from '@/components/ui/skeleton-table'
-import { ALL_STATUSES } from '@/lib/format'
+import { TASK_STATUSES } from '@/types'
 
 describe('SkeletonTable', () => {
   it('renderiza el número de cards por defecto', () => {
@@ -24,7 +24,7 @@ describe('SkeletonKanban', () => {
     const { container } = render(<SkeletonKanban />)
 
     expect(container.querySelectorAll('[data-testid="skeleton-column"]')).toHaveLength(
-      ALL_STATUSES.length,
+      TASK_STATUSES.length,
     )
   })
 })

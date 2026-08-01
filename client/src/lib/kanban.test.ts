@@ -1,8 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
 import { groupTasksByStatus, isValidStatus, subtaskProgress } from '@/lib/kanban'
-import { ALL_STATUSES } from '@/lib/format'
-import type { Task } from '@/types'
+import { TASK_STATUSES, type Task } from '@/types'
 
 function makeTask(overrides: Partial<Task> = {}): Task {
   return {
@@ -23,7 +22,7 @@ function makeTask(overrides: Partial<Task> = {}): Task {
 describe('groupTasksByStatus', () => {
   it('devuelve las 6 columnas vacías cuando no hay tareas', () => {
     const groups = groupTasksByStatus([])
-    for (const status of ALL_STATUSES) {
+    for (const status of TASK_STATUSES) {
       expect(groups[status]).toEqual([])
     }
   })
@@ -69,7 +68,7 @@ describe('subtaskProgress', () => {
 
 describe('isValidStatus', () => {
   it('reconoce los valores válidos del enum', () => {
-    for (const status of ALL_STATUSES) {
+    for (const status of TASK_STATUSES) {
       expect(isValidStatus(status)).toBe(true)
     }
   })

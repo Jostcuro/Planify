@@ -32,17 +32,6 @@ export const PRIORITY_BADGE: Record<TaskPriority, string> = {
   URGENT: 'bg-red-100 text-red-700',
 }
 
-export const ALL_STATUSES: TaskStatus[] = [
-  'BACKLOG',
-  'TODO',
-  'IN_PROGRESS',
-  'IN_REVIEW',
-  'COMPLETED',
-  'CANCELLED',
-]
-
-export const ALL_PRIORITIES: TaskPriority[] = ['LOW', 'MEDIUM', 'HIGH', 'URGENT']
-
 export const STATUS_BAR_COLORS: Record<TaskStatus, string> = {
   BACKLOG: '#94a3b8',
   TODO: '#3b82f6',
@@ -64,20 +53,6 @@ export function formatDate(value: string | null | undefined): string {
   const date = new Date(value)
   if (Number.isNaN(date.getTime())) return ''
   return date.toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' })
-}
-
-export function formatShortDate(value: string | null | undefined): string {
-  if (!value) return ''
-  const date = new Date(value)
-  if (Number.isNaN(date.getTime())) return ''
-  return date.toLocaleDateString('es-ES', { day: '2-digit', month: 'short' })
-}
-
-export function dateInputToIso(value: string): string | null {
-  if (!value) return null
-  const [year, month, day] = value.split('-').map(Number)
-  if (!year || !month || !day) return null
-  return new Date(year, month - 1, day, 12, 0, 0).toISOString()
 }
 
 export function dateObjectToIso(date: Date): string {
@@ -109,19 +84,4 @@ export function isToday(dueDate: string | null): boolean {
 export function getCategoryStyle(color: string | null | undefined): string {
   if (!color) return '#3b82f6'
   return color
-}
-
-export function hexToRgba(hex: string, alpha: number): string {
-  const normalized = hex.replace('#', '')
-  const full = normalized.length === 3
-    ? normalized
-        .split('')
-        .map((char) => char + char)
-        .join('')
-    : normalized
-  const int = Number.parseInt(full, 16)
-  const red = (int >> 16) & 255
-  const green = (int >> 8) & 255
-  const blue = int & 255
-  return `rgba(${red}, ${green}, ${blue}, ${alpha})`
 }

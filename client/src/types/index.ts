@@ -1,12 +1,17 @@
-export type TaskStatus =
-  | 'BACKLOG'
-  | 'TODO'
-  | 'IN_PROGRESS'
-  | 'IN_REVIEW'
-  | 'COMPLETED'
-  | 'CANCELLED'
+export const TASK_STATUSES = [
+  'BACKLOG',
+  'TODO',
+  'IN_PROGRESS',
+  'IN_REVIEW',
+  'COMPLETED',
+  'CANCELLED',
+] as const
 
-export type TaskPriority = 'LOW' | 'MEDIUM' | 'HIGH' | 'URGENT'
+export type TaskStatus = (typeof TASK_STATUSES)[number]
+
+export const TASK_PRIORITIES = ['LOW', 'MEDIUM', 'HIGH', 'URGENT'] as const
+
+export type TaskPriority = (typeof TASK_PRIORITIES)[number]
 
 export interface Category {
   id: string
@@ -45,30 +50,6 @@ export interface TaskFilters {
   dueDateTo?: string
   sortBy?: 'id' | 'title' | 'status' | 'priority' | 'dueDate' | 'completedAt'
   order?: 'asc' | 'desc'
-}
-
-export interface CreateTaskInput {
-  title: string
-  description?: string
-  status?: TaskStatus
-  priority?: TaskPriority
-  dueDate?: string | null
-  categoryId?: string | null
-  subtasks?: { title: string; completed?: boolean }[]
-}
-
-export interface UpdateTaskInput {
-  title?: string
-  description?: string
-  status?: TaskStatus
-  priority?: TaskPriority
-  dueDate?: string | null
-  categoryId?: string | null
-}
-
-export interface CreateSubtaskInput {
-  title: string
-  completed?: boolean
 }
 
 export interface MetricsOverview {

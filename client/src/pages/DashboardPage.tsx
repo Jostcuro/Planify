@@ -15,7 +15,7 @@ import { useCategories } from '@/hooks/useCategories'
 import { useTasks } from '@/hooks/useTasks'
 import { isOverdue } from '@/lib/format'
 import { cn } from '@/lib/utils'
-import type { Task, TaskFilters, TaskPriority, TaskStatus } from '@/types'
+import type { Task, TaskFilters } from '@/types'
 
 type TaskView = 'list' | 'kanban'
 
@@ -39,8 +39,8 @@ export default function DashboardPage() {
       sortBy: 'dueDate',
       order: 'asc',
     }
-    if (filters.status !== FILTER_ALL) value.status = [filters.status as TaskStatus]
-    if (filters.priority !== FILTER_ALL) value.priority = [filters.priority as TaskPriority]
+    if (filters.status !== FILTER_ALL) value.status = [filters.status]
+    if (filters.priority !== FILTER_ALL) value.priority = [filters.priority]
     if (filters.categoryId !== FILTER_ALL) value.categoryId = filters.categoryId
     if (filters.search.trim()) value.search = filters.search.trim()
     return value
