@@ -8,7 +8,7 @@ import TaskFilterBar, { FILTER_ALL, type TaskFilterBarValue } from '@/components
 import TaskFormModal from '@/components/tasks/TaskFormModal'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
-import { Skeleton } from '@/components/ui/skeleton'
+import SkeletonTable from '@/components/ui/skeleton-table'
 import { useCategories } from '@/hooks/useCategories'
 import { useTasks } from '@/hooks/useTasks'
 import { isOverdue } from '@/lib/format'
@@ -156,13 +156,7 @@ export default function DashboardPage() {
         <KanbanView filters={kanbanFilters} categories={categories ?? []} onEdit={openEdit} />
       ) : (
         <>
-          {isLoading ? (
-            <div className="grid gap-3">
-              <Skeleton className="h-32 w-full" />
-              <Skeleton className="h-32 w-full" />
-              <Skeleton className="h-32 w-2/3" />
-            </div>
-          ) : null}
+          {isLoading ? <SkeletonTable rows={4} /> : null}
 
           {isError ? (
             <div className="flex flex-col items-center gap-3 rounded-lg border border-dashed p-10 text-center">

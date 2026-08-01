@@ -5,8 +5,8 @@ import { useMemo, useState } from 'react'
 import { kanbanAccessibility, useKanbanSensors } from '@/components/tasks/dnd-config'
 import { KanbanCardContent } from '@/components/tasks/KanbanCard'
 import KanbanColumn from '@/components/tasks/KanbanColumn'
+import SkeletonKanban from '@/components/ui/skeleton-kanban'
 import { Button } from '@/components/ui/button'
-import { Skeleton } from '@/components/ui/skeleton'
 import { useTasks } from '@/hooks/useTasks'
 import { useUpdateTaskStatus } from '@/hooks/useUpdateTaskStatus'
 import { ALL_STATUSES } from '@/lib/format'
@@ -59,22 +59,7 @@ export default function KanbanView({ filters, categories, onEdit }: KanbanViewPr
       onDragEnd={handleDragEnd}
       onDragCancel={handleDragCancel}
     >
-      {isLoading ? (
-        <div className="flex gap-4 overflow-x-auto pb-2 lg:grid lg:grid-cols-6">
-          {ALL_STATUSES.map((status) => (
-            <div
-              key={status}
-              className="h-[calc(100vh-200px)] w-72 shrink-0 rounded-lg border bg-muted/40 p-3 lg:w-auto"
-            >
-              <Skeleton className="h-4 w-24" />
-              <div className="mt-4 space-y-2">
-                <Skeleton className="h-24 w-full" />
-                <Skeleton className="h-24 w-full" />
-              </div>
-            </div>
-          ))}
-        </div>
-      ) : null}
+      {isLoading ? <SkeletonKanban /> : null}
 
       {isError ? (
         <div className="flex flex-col items-center gap-3 rounded-lg border border-dashed p-10 text-center">
