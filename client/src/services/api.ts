@@ -3,7 +3,7 @@ import axios from 'axios'
 const LOGIN_PATH = '/login'
 
 export const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL ?? 'http://localhost:5000',
+  baseURL: import.meta.env.VITE_API_URL ?? 'http://localhost:5000/api',
 })
 
 api.interceptors.request.use(async (config) => {
