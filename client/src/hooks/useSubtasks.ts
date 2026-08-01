@@ -7,6 +7,7 @@ function useInvalidateTask() {
   const queryClient = useQueryClient()
   return (taskId: string) => {
     queryClient.invalidateQueries({ queryKey: ['task', taskId] })
+    queryClient.invalidateQueries({ queryKey: ['tasks'] })
   }
 }
 

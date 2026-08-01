@@ -97,6 +97,20 @@ describe('useUpdateTaskStatus', () => {
     expect(afterRollback?.find((task) => task.id === 'b')?.status).toBe('TODO')
   })
 
+  it('invalida la lista y el detalle de la tarea al cambiar el status', async () => {
+    queryClient.setQueryData(['task', 'a'], makeTask({ id: 'a', status: 'TODO' }))
+    updateTask.mockResolvedValue(makeTask({ id: 'a', status: 'IN_PROGRESS' }))
+
+    const { result } = renderHook(() => useUpdateTaskStatus(), { wrapper })
+
+    await act(async () => {
+      await result.current.mutateAsync({ id: 'a', status: 'IN_PROGRESS' })
+    })
+
+    expect(queryClient.getQueryState(TASKS_KEY)?.isInvalidated).toBe(true)
+    expect(queryClient.getQueryState(['task', 'a'])?.isInvalidated).toBe(true)
+  })
+
   it('no toca la cache cuando el status no cambia', async () => {
     updateTask.mockResolvedValue(makeTask({ id: 'a', status: 'TODO' }))
 

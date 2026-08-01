@@ -36,8 +36,9 @@ export function useUpdateTaskStatus() {
       }
       toast.error('No se pudo actualizar el estado de la tarea')
     },
-    onSettled: () => {
+    onSettled: (_data, _error, variables) => {
       queryClient.invalidateQueries({ queryKey: ['tasks'] })
+      queryClient.invalidateQueries({ queryKey: ['task', variables.id] })
       queryClient.invalidateQueries({ queryKey: ['metrics'] })
     },
   })
