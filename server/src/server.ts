@@ -2,15 +2,12 @@ import 'dotenv/config'
 
 import { createApp } from '@/app.js'
 import { disconnectPrisma } from '@/config/db.js'
-
-const DEFAULT_PORT = 5000
-const PORT = Number(process.env.PORT ?? DEFAULT_PORT)
-const NODE_ENV = process.env.NODE_ENV ?? 'development'
+import { env } from '@/config/env.js'
 
 const app = createApp()
 
-const server = app.listen(PORT, () => {
-  console.log(`[server] Planify API escuchando en http://localhost:${PORT} (${NODE_ENV})`)
+const server = app.listen(env.PORT, () => {
+  console.log(`[server] Planify API escuchando en http://localhost:${env.PORT} (${env.NODE_ENV})`)
 })
 
 async function shutdown(signal: string): Promise<void> {
