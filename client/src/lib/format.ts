@@ -43,6 +43,22 @@ export const ALL_STATUSES: TaskStatus[] = [
 
 export const ALL_PRIORITIES: TaskPriority[] = ['LOW', 'MEDIUM', 'HIGH', 'URGENT']
 
+export const STATUS_BAR_COLORS: Record<TaskStatus, string> = {
+  BACKLOG: '#94a3b8',
+  TODO: '#3b82f6',
+  IN_PROGRESS: '#f59e0b',
+  IN_REVIEW: '#8b5cf6',
+  COMPLETED: '#10b981',
+  CANCELLED: '#ef4444',
+}
+
+export const PRIORITY_BAR_COLORS: Record<TaskPriority, string> = {
+  LOW: '#94a3b8',
+  MEDIUM: '#3b82f6',
+  HIGH: '#f97316',
+  URGENT: '#ef4444',
+}
+
 export function formatDate(value: string | null | undefined): string {
   if (!value) return ''
   const date = new Date(value)
