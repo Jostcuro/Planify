@@ -1,5 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { toast } from 'sonner'
 
+import { getErrorMessage } from '@/lib/api-error'
 import { createTask, deleteTask, fetchTask, fetchTasks, updateTask } from '@/services/tasks'
 import type { CreateTaskPayload, UpdateTaskPayload } from '@/services/tasks'
 import type { TaskFilters } from '@/types'
@@ -26,6 +28,10 @@ export function useCreateTask() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['tasks'] })
       queryClient.invalidateQueries({ queryKey: ['metrics'] })
+      toast.success('Tarea creada')
+    },
+    onError: (error) => {
+      toast.error(getErrorMessage(error, 'No se pudo crear la tarea'))
     },
   })
 }
@@ -39,6 +45,10 @@ export function useUpdateTask() {
       queryClient.invalidateQueries({ queryKey: ['tasks'] })
       queryClient.invalidateQueries({ queryKey: ['task', variables.id] })
       queryClient.invalidateQueries({ queryKey: ['metrics'] })
+      toast.success('Tarea actualizada')
+    },
+    onError: (error) => {
+      toast.error(getErrorMessage(error, 'No se pudo actualizar la tarea'))
     },
   })
 }
@@ -50,6 +60,10 @@ export function useDeleteTask() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['tasks'] })
       queryClient.invalidateQueries({ queryKey: ['metrics'] })
+      toast.success('Tarea eliminada')
+    },
+    onError: (error) => {
+      toast.error(getErrorMessage(error, 'No se pudo eliminar la tarea'))
     },
   })
 }

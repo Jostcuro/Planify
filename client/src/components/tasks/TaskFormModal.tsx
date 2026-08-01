@@ -2,7 +2,6 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { CalendarIcon, Loader2, Plus, X } from 'lucide-react'
 import { useEffect } from 'react'
 import { Controller, useFieldArray, useForm } from 'react-hook-form'
-import { toast } from 'sonner'
 
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
@@ -56,11 +55,6 @@ export function toDefaults(
   }
 }
 
-function errorMessage(error: unknown): string {
-  const data = (error as { response?: { data?: { error?: string } } })?.response?.data
-  return data?.error ?? 'Ocurrió un error inesperado'
-}
-
 export default function TaskFormModal({ open, onClose, categories, task, initialDueDate }: TaskFormModalProps) {
   const isEdit = Boolean(task)
   const createTaskMutation = useCreateTask()
@@ -112,7 +106,6 @@ export default function TaskFormModal({ open, onClose, categories, task, initial
             categoryId: values.categoryId,
           },
         })
-        toast.success('Tarea actualizada')
       } else {
         await createTaskMutation.mutateAsync({
           title: values.title,
@@ -123,11 +116,10 @@ export default function TaskFormModal({ open, onClose, categories, task, initial
           categoryId: values.categoryId,
           subtasks: subtaskTitles.length ? subtaskTitles.map((title) => ({ title })) : undefined,
         })
-        toast.success('Tarea creada')
       }
       onClose()
-    } catch (error) {
-      toast.error(errorMessage(error))
+    } catch {
+      // el feedback de error se muestra desde el hook de mutación
     }
   }
 

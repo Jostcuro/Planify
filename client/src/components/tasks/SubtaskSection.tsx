@@ -29,7 +29,7 @@ export default function SubtaskSection({ taskId }: SubtaskSectionProps) {
       await createSubtaskMutation.mutateAsync({ taskId, payload: { title } })
       setNewTitle('')
     } catch {
-      // el error se refleja en el estado del query si falla la invalidación
+      // el feedback de error se muestra desde el hook de mutación
     }
   }
 

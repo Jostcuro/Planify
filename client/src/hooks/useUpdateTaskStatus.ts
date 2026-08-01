@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient, type QueryKey } from '@tanstack/react-query'
 import { toast } from 'sonner'
 
+import { getErrorMessage } from '@/lib/api-error'
 import { updateTask } from '@/services/tasks'
 import type { Task, TaskStatus } from '@/types'
 
@@ -28,13 +29,13 @@ export function useUpdateTaskStatus() {
 
       return { snapshot }
     },
-    onError: (_error, _variables, context) => {
+    onError: (error, _variables, context) => {
       if (context?.snapshot) {
         for (const [key, data] of context.snapshot) {
           queryClient.setQueryData(key as QueryKey, data)
         }
       }
-      toast.error('No se pudo actualizar el estado de la tarea')
+      toast.error(getErrorMessage(error, 'No se pudo actualizar el estado de la tarea'))
     },
     onSettled: (_data, _error, variables) => {
       queryClient.invalidateQueries({ queryKey: ['tasks'] })
