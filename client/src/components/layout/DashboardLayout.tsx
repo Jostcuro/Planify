@@ -26,7 +26,10 @@ export default function DashboardLayout() {
     <div className="flex min-h-screen flex-col">
       <header className="sticky top-0 z-10 border-b bg-background">
         <div className="flex h-14 items-center justify-between gap-4 px-4 sm:px-6">
-          <span className="text-lg font-semibold">Planify</span>
+          <span className="flex items-center gap-2 text-lg font-semibold">
+            <img src="/images/dragon-50.png" alt="Planify" className="size-6" />
+            Planify
+          </span>
           <nav className="flex items-center gap-1">
             {NAV_ITEMS.map(({ to, label, icon: Icon, end }) => (
               <NavLink

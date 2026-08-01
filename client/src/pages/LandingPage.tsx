@@ -1,4 +1,4 @@
-import { ArrowRight, BarChart3, CalendarDays, Columns3, ListChecks, Tags } from 'lucide-react'
+import { ArrowRight, BarChart3, CalendarDays, Columns3, Tags } from 'lucide-react'
 import { Link } from 'react-router-dom'
 
 import { BentoGrid, BentoGridItem } from '@/components/landing/BentoGrid'
@@ -52,7 +52,7 @@ export default function LandingPage() {
 
         <div className="relative z-10 flex flex-col items-center gap-8">
           <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-1 text-sm font-medium text-slate-300 backdrop-blur">
-            <ListChecks className="size-4" />
+            <img src="/images/dragon-50.png" alt="Planify" className="size-4" style={{ filter: 'brightness(0) invert(1)' }} />
             Planify — Gestor de tareas
           </span>
 
