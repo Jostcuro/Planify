@@ -16,4 +16,30 @@ describe('getErrorMessage', () => {
   it('usa un fallback personalizado', () => {
     expect(getErrorMessage(null, 'No se pudo eliminar la tarea')).toBe('No se pudo eliminar la tarea')
   })
+
+  it('muestra el primer detalle en errores de validación', () => {
+    const error = {
+      response: {
+        data: {
+          error: 'Validación fallida',
+          details: [
+            { path: 'title', message: 'El título es obligatorio' },
+            { path: 'priority', message: 'Prioridad inválida' },
+          ],
+        },
+      },
+    }
+
+    expect(getErrorMessage(error)).toBe('El título es obligatorio')
+  })
+
+  it('muestra el error del servidor cuando no hay detalles de validación', () => {
+    const error = {
+      response: {
+        data: { error: 'Validación fallida', details: [] },
+      },
+    }
+
+    expect(getErrorMessage(error)).toBe('Validación fallida')
+  })
 })
