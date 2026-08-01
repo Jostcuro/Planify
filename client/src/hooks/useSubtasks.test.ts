@@ -6,12 +6,14 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { useCreateSubtask, useDeleteSubtask, useToggleSubtask } from '@/hooks/useSubtasks'
 import type { Subtask, Task } from '@/types'
 
-const { createSubtask, toggleSubtask, deleteSubtask } = vi.hoisted(() => ({
+const { createSubtask, toggleSubtask, deleteSubtask, toast } = vi.hoisted(() => ({
   createSubtask: vi.fn(),
   toggleSubtask: vi.fn(),
   deleteSubtask: vi.fn(),
+  toast: { success: vi.fn(), error: vi.fn() },
 }))
 
+vi.mock('sonner', () => ({ toast }))
 vi.mock('@/services/subtasks', () => ({ createSubtask, toggleSubtask, deleteSubtask }))
 
 const TASKS_KEY = ['tasks', undefined]
@@ -60,6 +62,8 @@ beforeEach(() => {
   createSubtask.mockReset().mockResolvedValue(makeSubtask({ id: 'sub-2' }))
   toggleSubtask.mockReset().mockResolvedValue(makeSubtask({ completed: true }))
   deleteSubtask.mockReset().mockResolvedValue({ id: 'sub-1' })
+  toast.success.mockReset()
+  toast.error.mockReset()
 })
 
 afterEach(() => {
@@ -101,5 +105,61 @@ describe('useSubtasks', () => {
     expect(deleteSubtask).toHaveBeenCalledWith('a', 'sub-1')
     expect(queryClient.getQueryState(TASKS_KEY)?.isInvalidated).toBe(true)
     expect(queryClient.getQueryState(['task', 'a'])?.isInvalidated).toBe(true)
+  })
+
+  it('notifica el éxito al crear una subtarea', async () => {
+    const { result } = renderHook(() => useCreateSubtask(), { wrapper })
+
+    await act(async () => {
+      await result.current.mutateAsync({ taskId: 'a', payload: { title: 'Nueva subtarea' } })
+    })
+
+    expect(toast.success).toHaveBeenCalledWith('Subtarea añadida')
+  })
+
+  it('notifica el éxito al eliminar una subtarea', async () => {
+    const { result } = renderHook(() => useDeleteSubtask(), { wrapper })
+
+    await act(async () => {
+      await result.current.mutateAsync({ taskId: 'a', subtaskId: 'sub-1' })
+    })
+
+    expect(toast.success).toHaveBeenCalledWith('Subtarea eliminada')
+  })
+
+  it('no notifica éxito al marcar una subtarea', async () => {
+    const { result } = renderHook(() => useToggleSubtask(), { wrapper })
+
+    await act(async () => {
+      await result.current.mutateAsync({ taskId: 'a', subtaskId: 'sub-1' })
+    })
+
+    expect(toast.success).not.toHaveBeenCalled()
+  })
+
+  it('notifica el error al crear una subtarea', async () => {
+    createSubtask.mockRejectedValueOnce(new Error('Network error'))
+    const { result } = renderHook(() => useCreateSubtask(), { wrapper })
+
+    await act(async () => {
+      await expect(
+        result.current.mutateAsync({ taskId: 'a', payload: { title: 'Nueva subtarea' } }),
+      ).rejects.toThrow('Network error')
+    })
+
+    expect(toast.error).toHaveBeenCalledWith('No se pudo añadir la subtarea')
+  })
+
+  it('notifica el error al marcar una subtarea', async () => {
+    toggleSubtask.mockRejectedValueOnce(new Error('Network error'))
+    const { result } = renderHook(() => useToggleSubtask(), { wrapper })
+
+    await act(async () => {
+      await expect(result.current.mutateAsync({ taskId: 'a', subtaskId: 'sub-1' })).rejects.toThrow(
+        'Network error',
+      )
+    })
+
+    expect(toast.error).toHaveBeenCalledWith('No se pudo actualizar la subtarea')
   })
 })

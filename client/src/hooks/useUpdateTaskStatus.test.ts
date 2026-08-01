@@ -6,11 +6,13 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { useUpdateTaskStatus } from '@/hooks/useUpdateTaskStatus'
 import type { Task } from '@/types'
 
-const { updateTask, fetchTasks } = vi.hoisted(() => ({
+const { updateTask, fetchTasks, toast } = vi.hoisted(() => ({
   updateTask: vi.fn(),
   fetchTasks: vi.fn(),
+  toast: { success: vi.fn(), error: vi.fn() },
 }))
 
+vi.mock('sonner', () => ({ toast }))
 vi.mock('@/services/tasks', () => ({ updateTask, fetchTasks }))
 
 const TASKS_KEY = ['tasks', undefined]
@@ -49,6 +51,8 @@ beforeEach(() => {
   queryClient.setQueryData(TASKS_KEY, structuredClone(BASE_TASKS))
   updateTask.mockReset()
   fetchTasks.mockReset().mockResolvedValue(structuredClone(BASE_TASKS))
+  toast.success.mockReset()
+  toast.error.mockReset()
 })
 
 afterEach(() => {
@@ -95,6 +99,7 @@ describe('useUpdateTaskStatus', () => {
     const afterRollback = queryClient.getQueryData<Task[]>(TASKS_KEY)
     expect(afterRollback?.find((task) => task.id === 'a')?.status).toBe('TODO')
     expect(afterRollback?.find((task) => task.id === 'b')?.status).toBe('TODO')
+    expect(toast.error).toHaveBeenCalledWith('No se pudo actualizar el estado de la tarea')
   })
 
   it('invalida la lista y el detalle de la tarea al cambiar el status', async () => {
@@ -109,6 +114,7 @@ describe('useUpdateTaskStatus', () => {
 
     expect(queryClient.getQueryState(TASKS_KEY)?.isInvalidated).toBe(true)
     expect(queryClient.getQueryState(['task', 'a'])?.isInvalidated).toBe(true)
+    expect(toast.success).not.toHaveBeenCalled()
   })
 
   it('no toca la cache cuando el status no cambia', async () => {
