@@ -2,6 +2,7 @@ import { Check, Loader2, Pencil, Plus, Trash2, X } from 'lucide-react'
 import { useState } from 'react'
 
 import { Button } from '@/components/ui/button'
+import ConfirmDialog from '@/components/ui/confirm-dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import Modal from '@/components/ui/modal'
@@ -27,6 +28,7 @@ export default function CategoryManager({ open, onClose }: CategoryManagerProps)
   const [editingId, setEditingId] = useState<string | null>(null)
   const [editName, setEditName] = useState('')
   const [editColor, setEditColor] = useState(DEFAULT_COLOR)
+  const [deleteTarget, setDeleteTarget] = useState<Category | null>(null)
   const [error, setError] = useState<string | null>(null)
 
   const resetNewForm = () => {
@@ -46,7 +48,7 @@ export default function CategoryManager({ open, onClose }: CategoryManagerProps)
       await createCategoryMutation.mutateAsync({ name, color: newColor })
       resetNewForm()
     } catch {
-      setError('No se pudo crear la categoría.')
+      // el feedback de error se muestra desde el hook de mutación
     }
   }
 
@@ -68,7 +70,17 @@ export default function CategoryManager({ open, onClose }: CategoryManagerProps)
       await updateCategoryMutation.mutateAsync({ id: editingId, payload: { name, color: editColor } })
       setEditingId(null)
     } catch {
-      setError('No se pudo guardar la categoría.')
+      // el feedback de error se muestra desde el hook de mutación
+    }
+  }
+
+  const handleConfirmDelete = async () => {
+    if (!deleteTarget) return
+    try {
+      await deleteCategoryMutation.mutateAsync(deleteTarget.id)
+      setDeleteTarget(null)
+    } catch {
+      // el feedback de error se muestra desde el hook de mutación
     }
   }
 
@@ -174,11 +186,7 @@ export default function CategoryManager({ open, onClose }: CategoryManagerProps)
                   <Button
                     variant="ghost"
                     size="icon"
-                    onClick={() => {
-                      if (window.confirm(`¿Eliminar la categoría "${category.name}"?`)) {
-                        void deleteCategoryMutation.mutateAsync(category.id)
-                      }
-                    }}
+                    onClick={() => setDeleteTarget(category)}
                     aria-label="Eliminar categoría"
                   >
                     <Trash2 />
@@ -188,6 +196,16 @@ export default function CategoryManager({ open, onClose }: CategoryManagerProps)
             </li>
           ))}
         </ul>
+
+        <ConfirmDialog
+          open={deleteTarget !== null}
+          title="Eliminar categoría"
+          description={deleteTarget ? `¿Eliminar la categoría "${deleteTarget.name}"?` : ''}
+          confirmLabel="Eliminar"
+          isPending={deleteCategoryMutation.isPending}
+          onConfirm={() => void handleConfirmDelete()}
+          onClose={() => setDeleteTarget(null)}
+        />
       </div>
     </Modal>
   )

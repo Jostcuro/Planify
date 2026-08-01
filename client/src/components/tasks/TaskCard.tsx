@@ -5,6 +5,7 @@ import SubtaskSection from '@/components/tasks/SubtaskSection'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
+import ConfirmDialog from '@/components/ui/confirm-dialog'
 import {
   Select,
   SelectContent,
@@ -12,7 +13,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { useDeleteTask, useUpdateTask } from '@/hooks/useTasks'
+import { useDeleteTask } from '@/hooks/useTasks'
+import { useUpdateTaskStatus } from '@/hooks/useUpdateTaskStatus'
 import { cn } from '@/lib/utils'
 import {
   ALL_STATUSES,
@@ -35,7 +37,8 @@ interface TaskCardProps {
 
 export default function TaskCard({ task, categories, onEdit }: TaskCardProps) {
   const [expanded, setExpanded] = useState(false)
-  const updateTaskMutation = useUpdateTask()
+  const [confirmDelete, setConfirmDelete] = useState(false)
+  const updateTaskStatusMutation = useUpdateTaskStatus()
   const deleteTaskMutation = useDeleteTask()
 
   const category = task.categoryId
@@ -46,11 +49,11 @@ export default function TaskCard({ task, categories, onEdit }: TaskCardProps) {
   const today = isToday(task.dueDate)
 
   const handleDelete = async () => {
-    if (!window.confirm(`¿Eliminar la tarea "${task.title}"?`)) return
     try {
       await deleteTaskMutation.mutateAsync(task.id)
+      setConfirmDelete(false)
     } catch {
-      // el 404/errores de red quedan visibles en el estado del query
+      // el feedback de error se muestra desde el hook de mutación
     }
   }
 
@@ -68,7 +71,7 @@ export default function TaskCard({ task, categories, onEdit }: TaskCardProps) {
             <Button variant="ghost" size="icon" onClick={() => onEdit(task)} aria-label="Editar tarea">
               <Pencil />
             </Button>
-            <Button variant="ghost" size="icon" onClick={() => void handleDelete()} aria-label="Eliminar tarea">
+            <Button variant="ghost" size="icon" onClick={() => setConfirmDelete(true)} aria-label="Eliminar tarea">
               <Trash2 />
             </Button>
           </div>
@@ -107,7 +110,7 @@ export default function TaskCard({ task, categories, onEdit }: TaskCardProps) {
           <Select
             value={task.status}
             onValueChange={(status) =>
-              updateTaskMutation.mutate({ id: task.id, payload: { status: status as Task['status'] } })
+              updateTaskStatusMutation.mutate({ id: task.id, status: status as Task['status'] })
             }
           >
             <SelectTrigger className="h-8 w-auto gap-1 text-xs" aria-label="Cambiar estado">
@@ -129,6 +132,16 @@ export default function TaskCard({ task, categories, onEdit }: TaskCardProps) {
 
         {expanded ? <SubtaskSection taskId={task.id} /> : null}
       </CardContent>
+
+      <ConfirmDialog
+        open={confirmDelete}
+        title="Eliminar tarea"
+        description={`¿Eliminar la tarea "${task.title}"?`}
+        confirmLabel="Eliminar"
+        isPending={deleteTaskMutation.isPending}
+        onConfirm={() => void handleDelete()}
+        onClose={() => setConfirmDelete(false)}
+      />
     </Card>
   )
 }
