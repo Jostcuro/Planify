@@ -12,7 +12,7 @@
 ![TailwindCSS](https://img.shields.io/badge/TailwindCSS-3.4-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white)
 ![shadcn/ui](https://img.shields.io/badge/shadcn%2Fui-2.0-000000?style=for-the-badge&logo=shadcnui&logoColor=white)
 
-![Node.js](https://img.shields.io/badge/Node.js-20-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)
+![Node.js](https://img.shields.io/badge/Node.js-22%2B-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)
 ![Express](https://img.shields.io/badge/Express-4.21-000000?style=for-the-badge&logo=express&logoColor=white)
 ![Prisma](https://img.shields.io/badge/Prisma-5.22-2D3748?style=for-the-badge&logo=prisma&logoColor=white)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)
@@ -63,7 +63,7 @@
 | Capa | Tecnología |
 |---|---|
 | **Frontend** | React 18 · Vite 5 · TypeScript 5 · Tailwind CSS 3 · shadcn/ui · TanStack Query 5 · React Router 6 · Recharts 3 · dnd-kit · Framer Motion |
-| **Backend** | Node.js 20 · Express 4 · TypeScript (ESM) · Prisma 5 · PostgreSQL 15 · Zod 4 |
+| **Backend** | Node.js 22+ · Express 4 · TypeScript (ESM) · Prisma 5 · PostgreSQL 15 · Zod 4 |
 | **Autenticación** | Clerk (`@clerk/clerk-react` + `@clerk/express` v2) |
 | **Testing** | Vitest 4 · Testing Library · jsdom |
 | **CI/CD** | GitHub Actions (typecheck → tests → build) |
@@ -72,7 +72,7 @@
 
 ### Requisitos previos
 
-- **Node.js ≥ 20**
+- **Node.js ≥ 22.19**
 - **PostgreSQL 15** (local o en la nube)
 - Una **aplicación Clerk** con sus claves (https://dashboard.clerk.com)
 
