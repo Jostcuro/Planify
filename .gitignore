@@ -1,0 +1,13 @@
+# Logs
+*.log
+
+# Configuración local
+*.local
+
+# Entornos reales (nunca versionar secretos)
+.env
+
+# Documentación interna (solo local, no visible en el repo)
+AGENTS.md
+PROJECT_CONTEXT.md
+especificaciones.md
